@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /tesekkurler.html
+
+Sitemap: https://metalintellectual.com/sitemap.xml
