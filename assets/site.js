@@ -40,11 +40,27 @@
   const mb=document.querySelector('.menu-btn'), nav=document.querySelector('.nav');
   if(mb&&nav) mb.addEventListener('click',()=>{const o=nav.classList.toggle('open');mb.setAttribute('aria-expanded',String(o));});
 
+  // projeler: fotoğraf yerine çalışma animasyonu (görününce oynar)
+  const MV={scissor:'hero-scissor',gate:'gate-open',spiral:'spiral-turn',sgate:'sgate',burma:'burma'};
+  const vname=src=>{const m=/assets\/img\/r-([a-z]+?)t?\.jpg/.exec(src||'');if(!m)return null;const v=MV[m[1]];return v?(v===1?m[1]:v):null;};
+  const mkv=(img,v)=>{const e=document.createElement('video');e.muted=true;e.loop=true;e.playsInline=true;['muted','playsinline','loop'].forEach(a=>e.setAttribute(a,''));
+    e.preload='none';e.poster='assets/video/'+v+'.jpg';e.className=img.className;e.setAttribute('aria-label',img.alt||'');if(img.dataset.iAlt)e.dataset.iAria=img.dataset.iAlt;
+    e.setAttribute('data-inview','');['webm','mp4'].forEach(x=>{const so=document.createElement('source');so.src='assets/video/'+v+'.'+x;so.type='video/'+x;e.appendChild(so);});
+    if(img.getAttribute('width')){e.setAttribute('width',img.getAttribute('width'));e.setAttribute('height',img.getAttribute('height'));}
+    img.replaceWith(e);return e;};
+  document.querySelectorAll('img[src*="assets/img/r-"]').forEach(img=>{if(img.closest('.lb')||img.classList.contains('sc-ln'))return;const v=vname(img.getAttribute('src'));if(!v)return;
+    const a=img.closest('a.ph');if(a)a.dataset.v=v;const im=img.closest('.sc-im');if(im){const ln=im.querySelector('.sc-ln');ln&&ln.remove();}mkv(img,v);});
+
   // fotoğraf büyütme
   const lb=document.getElementById('lb');
   if(lb&&lb.showModal){
     const ps=[...document.querySelectorAll('a.ph')],im=lb.querySelector('img'),cp=lb.querySelector('p');let k=0;
-    const show=i=>{k=(i+ps.length)%ps.length;const a=ps[k],t=a.querySelector('img');im.src=a.href;im.alt=t.alt;cp.textContent=t.alt;};
+    const lv=document.createElement('video');lv.muted=true;lv.loop=true;lv.playsInline=true;['muted','playsinline','loop'].forEach(a=>lv.setAttribute(a,''));lv.hidden=true;lb.insertBefore(lv,cp);
+    const wb=lv.canPlayType('video/webm; codecs="vp9"')?'.webm':'.mp4';
+    const show=i=>{k=(i+ps.length)%ps.length;const a=ps[k],t=a.querySelector('img,video'),al=t.alt||t.getAttribute('aria-label')||'';cp.textContent=al;
+      if(a.dataset.v){im.hidden=true;lv.hidden=false;lv.poster='assets/video/'+a.dataset.v+'.jpg';lv.src='assets/video/'+a.dataset.v+wb;lv.setAttribute('aria-label',al);const p=lv.play();p&&p.catch(()=>{});}
+      else{lv.pause();lv.hidden=true;im.hidden=false;im.src=a.href;im.alt=al;}};
+    lb.addEventListener('close',()=>lv.pause());
     ps.forEach((a,i)=>a.addEventListener('click',e=>{e.preventDefault();show(i);lb.showModal();}));
     lb.querySelector('.lb-x').onclick=()=>lb.close();
     lb.querySelector('.lb-p').onclick=()=>show(k-1);
@@ -58,17 +74,27 @@
 
   // açılış sahnesi: işler sırayla
   const hero=document.querySelector('.ph-hero');
-  if(hero){const sl=[...hero.querySelectorAll('.ph-slide')],dots=[...hero.querySelectorAll('.ph-dot')],D=6000;let k=0,t=null;
-    const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    sl.forEach(v=>{if(v.tagName==='VIDEO'){if(red){v.removeAttribute('autoplay');v.pause();}else if(v.classList.contains('on')){const p=v.play();p&&p.catch(()=>{});}}});
-    const sp=[...hero.querySelectorAll('.ph-sp')];const go=n=>{k=(n+sl.length)%sl.length;sl.forEach((s,i)=>{s.classList.toggle('on',i===k);if(s.tagName==='VIDEO'){if(i===k&&!red){s.currentTime=0;const p=s.play();p&&p.catch(()=>{});}else s.pause();}});sp.forEach((s,i)=>s.classList.toggle('on',i===k));dots.forEach((d,i)=>{d.classList.toggle('on',i===k);const b=d.querySelector('i');b.style.animation='none';b.offsetWidth;b.style.animation='';});};
-    const vid=sl.findIndex(x=>x.tagName==='VIDEO');const dur=()=>+(sl[k].dataset.dur||D);const run=()=>{clearTimeout(t);hero.style.setProperty('--dur',(vid>=0?8000:dur())+'ms');if(red)return;if(vid>=0){if(k!==vid)t=setTimeout(()=>{go(vid);run();},8000);return;}t=setTimeout(()=>{go(k+1);run();},dur());};
-    hero.style.setProperty('--dur',D+'ms');if(vid>=0){hero.classList.add('has-vid');dots[vid]&&dots[vid].classList.add('is-vid');}
-    dots.forEach((d,i)=>d.addEventListener('click',()=>{go(i);run();}));
-    hero.addEventListener('mouseenter',()=>{clearTimeout(t);hero.classList.add('paused');});
-    hero.addEventListener('mouseleave',()=>{hero.classList.remove('paused');run();});
-    document.addEventListener('visibilitychange',()=>document.hidden?clearTimeout(t):run());
-    run();}
+  if(hero){const sl=[...hero.querySelectorAll('.ph-slide')],dots=[...hero.querySelectorAll('.ph-dot')],sp=[...hero.querySelectorAll('.ph-sp')],D=6000;let k=0,t=null;
+    const red=matchMedia('(prefers-reduced-motion: reduce)').matches,isV=s=>s&&s.tagName==='VIDEO';
+    // her video bir kez baştan sona oynar, bitince sıradakine geçer; sıradaki önceden yüklenir (takılma/titreme olmasın)
+    const prep=s=>{if(!isV(s))return;if(s.dataset.poster&&!s.poster)s.poster=s.dataset.poster;if(s.preload!=='auto'){s.preload='auto';s.load();}};
+    const len=s=>isV(s)?((isFinite(s.duration)&&s.duration>0)?s.duration*1000:+(s.dataset.dur||9000)):+(s.dataset.dur||D);
+    const bar=()=>{hero.style.setProperty('--dur',len(sl[k])+'ms');dots.forEach((d,i)=>{d.classList.toggle('on',i===k);const b=d.querySelector('i');if(b){b.style.animation='none';b.offsetWidth;b.style.animation='';}});};
+    const arm=()=>{clearTimeout(t);if(red)return;t=setTimeout(()=>go(k+1),len(sl[k])+(isV(sl[k])?2500:0));};
+    const play=v=>{const p=v.play();p&&p.catch(()=>{});};
+    const go=n=>{const prev=sl[k];k=(n+sl.length)%sl.length;const cur=sl[k];
+      prep(cur);if(isV(cur)&&!red){try{cur.currentTime=0;}catch(e){}play(cur);}
+      sl.forEach((s,i)=>s.classList.toggle('on',i===k));sp.forEach((s,i)=>s.classList.toggle('on',i===k));
+      if(isV(prev)&&prev!==cur)setTimeout(()=>{if(sl[k]!==prev)prev.pause();},1500);
+      bar();arm();setTimeout(()=>prep(sl[(k+1)%sl.length]),1200);};
+    sl.forEach(s=>{if(!isV(s))return;s.loop=false;s.removeAttribute('loop');
+      s.addEventListener('ended',()=>{if(sl[k]===s&&!red)go(k+1);});
+      s.addEventListener('loadedmetadata',()=>{if(sl[k]===s){bar();arm();}});});
+    if(red){sl.forEach(s=>{if(isV(s)){s.removeAttribute('autoplay');s.pause();prep(s);}});}
+    hero.classList.add('has-vid');
+    dots.forEach((d,i)=>d.addEventListener('click',()=>go(i)));
+    document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(t);isV(sl[k])&&sl[k].pause();}else{isV(sl[k])&&!red&&play(sl[k]);arm();}});
+    if(isV(sl[0])&&!red)play(sl[0]);bar();arm();setTimeout(()=>prep(sl[1]),2500);}
 
   // bir parçanın yolculuğu: kaydırdıkça adım
   const jr=document.querySelector('.jr');

@@ -309,3 +309,8 @@ form.qf{border:0;border-top:2px solid var(--ink);background:var(--panel);padding
 
 .ph-hero.has-vid .ph-dot.on.is-vid i{animation:none;width:100%}
 .pr-grid video{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:#2a2c30}
+/* videolar: ölçekleme/kaydırma yok (titreme yapar), yalnız yumuşak geçiş */
+video.ph-slide,video.ph-slide.on{transform:none;transition:opacity 1.1s ease}
+.ph-slide{will-change:opacity;backface-visibility:hidden}
+.sc-im video,a.ph video{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:#1a1c1f}
+.lb video{display:block;max-width:92vw;max-height:84vh;width:auto;height:auto;margin:0 auto}

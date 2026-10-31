@@ -36,6 +36,13 @@ tr:{
 "sim.s4.note":"Kritik ölçüler kumpasla ölçülür ve kayda geçirilir. Çizimde tolerans belirtilmemişse ISO 2768-m uygulanır; örneğin 110 mm'lik bir ölçü 109,7–110,3 mm aralığında olmalıdır."
 },
 en:{
+"pr.vpress":"Hydraulic press: the hand pump drives the ram down and bends the flat bar",
+"pr.vtank":"Stainless tank: the valve opens and the liquid drops in the level gauge",
+"pr.vseri":"Screen printing: the screen lowers, the squeegee pushes the ink through and the logo stays on the plate",
+"pr.vconveyor":"Boxes travel along the roller conveyor line",
+"pr.vkitchen":"Stainless sink bench: the tap opens and water runs into the sink",
+"pr.vlift":"The hydraulic table lifts a 4-tonne load while the gauge shows the pressure",
+"pr.vsteel":"The steel platform's columns, beams, deck and stair are installed in sequence",
 "pr.vsgate":"Motorized sliding wrought iron gate opening and closing",
 "pr.vgate":"Double-leaf wrought iron garden gate opening and closing",
 "pr.vburma":"Bar twisting machine twisting a square bar",
@@ -543,6 +550,13 @@ en:{
 "ty.h":"Your request has been received.","ty.p":"We will reply in writing once your drawings have been reviewed. For urgent matters, you may contact us via WhatsApp.","ty.back":"Home"
 },
 ar:{
+"pr.vpress":"مكبس هيدروليكي: تدفع المضخة اليدوية المكبس للأسفل فيثني القضيب المسطح",
+"pr.vtank":"خزان ستانلس: يُفتح الصمام وينخفض السائل في مؤشر المستوى",
+"pr.vseri":"الطباعة بالشاشة: تنخفض الشاشة ويدفع الممسح الحبر فيبقى الشعار على اللوح",
+"pr.vconveyor":"الصناديق تتحرك على خط الناقل ذي البكرات",
+"pr.vkitchen":"طاولة حوض من الستانلس: يُفتح الصنبور ويتدفق الماء إلى الحوض",
+"pr.vlift":"الطاولة الهيدروليكية ترفع حمولة 4 أطنان والمانومتر يبيّن الضغط",
+"pr.vsteel":"تركيب أعمدة المنصة الفولاذية وعوارضها وأرضيتها ودرجها بالتتابع",
 "pr.vsgate":"بوابة منزلقة آلية من الحديد المشغول تُفتح وتُغلق",
 "pr.vgate":"بوابة حديد مشغول بجناحين تُفتح وتُغلق",
 "pr.vburma":"آلة لَيّ تلفّ قضيبًا مربعًا",
