@@ -27,6 +27,7 @@
     document.querySelectorAll('input[name=dil]').forEach(i=>i.value=l);
     if(window.MI_SIM_REFRESH) window.MI_SIM_REFRESH();
     if(save){try{localStorage.setItem('mi-lang',l);}catch(e){}}
+    try{window.dispatchEvent(new Event('mi-lang'));}catch(e){}
   }
   document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang,true)));
   let l=null;
@@ -59,12 +60,39 @@
   const hero=document.querySelector('.ph-hero');
   if(hero){const sl=[...hero.querySelectorAll('.ph-slide')],dots=[...hero.querySelectorAll('.ph-dot')],D=6000;let k=0,t=null;
     const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const sp=[...hero.querySelectorAll('.ph-sp')];const go=n=>{k=(n+sl.length)%sl.length;sl.forEach((s,i)=>s.classList.toggle('on',i===k));sp.forEach((s,i)=>s.classList.toggle('on',i===k));dots.forEach((d,i)=>{d.classList.toggle('on',i===k);const b=d.querySelector('i');b.style.animation='none';b.offsetWidth;b.style.animation='';});};
-    const run=()=>{clearInterval(t);if(!red)t=setInterval(()=>go(k+1),D);};
-    hero.style.setProperty('--dur',D+'ms');
+    sl.forEach(v=>{if(v.tagName==='VIDEO'){if(red){v.removeAttribute('autoplay');v.pause();}else if(v.classList.contains('on')){const p=v.play();p&&p.catch(()=>{});}}});
+    const sp=[...hero.querySelectorAll('.ph-sp')];const go=n=>{k=(n+sl.length)%sl.length;sl.forEach((s,i)=>{s.classList.toggle('on',i===k);if(s.tagName==='VIDEO'){if(i===k&&!red){s.currentTime=0;const p=s.play();p&&p.catch(()=>{});}else s.pause();}});sp.forEach((s,i)=>s.classList.toggle('on',i===k));dots.forEach((d,i)=>{d.classList.toggle('on',i===k);const b=d.querySelector('i');b.style.animation='none';b.offsetWidth;b.style.animation='';});};
+    const vid=sl.findIndex(x=>x.tagName==='VIDEO');const dur=()=>+(sl[k].dataset.dur||D);const run=()=>{clearTimeout(t);hero.style.setProperty('--dur',(vid>=0?8000:dur())+'ms');if(red)return;if(vid>=0){if(k!==vid)t=setTimeout(()=>{go(vid);run();},8000);return;}t=setTimeout(()=>{go(k+1);run();},dur());};
+    hero.style.setProperty('--dur',D+'ms');if(vid>=0){hero.classList.add('has-vid');dots[vid]&&dots[vid].classList.add('is-vid');}
     dots.forEach((d,i)=>d.addEventListener('click',()=>{go(i);run();}));
-    hero.addEventListener('mouseenter',()=>{clearInterval(t);hero.classList.add('paused');});
+    hero.addEventListener('mouseenter',()=>{clearTimeout(t);hero.classList.add('paused');});
     hero.addEventListener('mouseleave',()=>{hero.classList.remove('paused');run();});
-    document.addEventListener('visibilitychange',()=>document.hidden?clearInterval(t):run());
+    document.addEventListener('visibilitychange',()=>document.hidden?clearTimeout(t):run());
     run();}
+
+  // bir parçanın yolculuğu: kaydırdıkça adım
+  const jr=document.querySelector('.jr');
+  if(jr&&'IntersectionObserver' in window){const st=[...jr.querySelectorAll('.jr-st')],im=[...jr.querySelectorAll('.jr-im')],bar=jr.querySelector('.jr-bar i'),num=jr.querySelector('.jr-num');
+    im.forEach((m,i)=>{if(i<2)m.loading='eager';});
+    const set=n=>{st.forEach((x,i)=>x.classList.toggle('on',i===n));im.forEach((x,i)=>x.classList.toggle('on',i===n));if(bar)bar.style.width=((n+1)/st.length*100)+'%';if(num)num.textContent=String(n+1).padStart(2,'0');};
+    const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)set(+e.target.dataset.n);});},{rootMargin:'-42% 0px -42% 0px'});
+    st.forEach(x=>io.observe(x));
+    const pre=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){im.forEach(m=>{m.loading='eager';});pre.disconnect();}},{rootMargin:'600px 0px'});pre.observe(jr);}
+
+  // hizmet kartları: render → teknik çizim (dokunmatikte görünür olunca bir kez)
+  if(matchMedia('(hover: none)').matches&&'IntersectionObserver' in window&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const io2=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const c=e.target;c.classList.add('peek');setTimeout(()=>c.classList.remove('peek'),1800);io2.unobserve(c);}}),{threshold:.7});
+    document.querySelectorAll('.sc-card').forEach(c=>{if(c.querySelector('.sc-ln'))io2.observe(c);});}
+
+  // 3B görüntüleyici: görünür olunca yüklenir
+  const v3=document.querySelector('.v3d');
+  if(v3){const load=src=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s);});
+    const go3=async()=>{try{for(const f of ['three.min.js','GLTFLoader.js','OrbitControls.js','RoomEnvironment.js','viewer.js'])await load('assets/3d/'+f);window.MI_V3D&&window.MI_V3D(v3);}catch(e){v3.classList.add('v3d-fail');}};
+    if('IntersectionObserver' in window){const io3=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io3.disconnect();go3();}},{rootMargin:'300px 0px'});io3.observe(v3);}else go3();}
+
+  // görünür olunca oynayan videolar
+  const ivs=[...document.querySelectorAll('video[data-inview]')];
+  if(ivs.length&&'IntersectionObserver' in window&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const io4=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target;if(e.isIntersecting){const p=v.play();p&&p.catch(()=>{});}else v.pause();}),{threshold:.35});
+    ivs.forEach(v=>io4.observe(v));}
 })();
