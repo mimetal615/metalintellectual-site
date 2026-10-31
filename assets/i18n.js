@@ -36,6 +36,9 @@ tr:{
 "sim.s4.note":"Kritik ölçüler kumpasla ölçülür ve kayda geçirilir. Çizimde tolerans belirtilmemişse ISO 2768-m uygulanır; örneğin 110 mm'lik bir ölçü 109,7–110,3 mm aralığında olmalıdır."
 },
 en:{
+"pr.vsgate":"Motorized sliding wrought iron gate opening and closing",
+"pr.vgate":"Double-leaf wrought iron garden gate opening and closing",
+"pr.vburma":"Bar twisting machine twisting a square bar",
 "v3.load":"Loading model…",
 "v3.g4":"Base frame and hidden unit",
 "v3.g3":"Hydraulic cylinders",
@@ -540,6 +543,9 @@ en:{
 "ty.h":"Your request has been received.","ty.p":"We will reply in writing once your drawings have been reviewed. For urgent matters, you may contact us via WhatsApp.","ty.back":"Home"
 },
 ar:{
+"pr.vsgate":"بوابة منزلقة آلية من الحديد المشغول تُفتح وتُغلق",
+"pr.vgate":"بوابة حديد مشغول بجناحين تُفتح وتُغلق",
+"pr.vburma":"آلة لَيّ تلفّ قضيبًا مربعًا",
 "v3.load":"جارٍ تحميل النموذج…",
 "v3.g4":"الهيكل السفلي والوحدة المخفية",
 "v3.g3":"الأسطوانات الهيدروليكية",
