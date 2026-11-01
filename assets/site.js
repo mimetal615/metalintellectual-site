@@ -41,7 +41,7 @@
   if(mb&&nav) mb.addEventListener('click',()=>{const o=nav.classList.toggle('open');mb.setAttribute('aria-expanded',String(o));});
 
   // projeler: fotoğraf yerine çalışma animasyonu (görününce oynar)
-  const MV={scissor:'hero-scissor',gate:'gate-open',spiral:'spiral-turn',sgate:'sgate',burma:'burma',press:'press',lift:'lift',conveyor:'conveyor',kitchen:'kitchen',tava:'tava'};
+  const MV={scissor:'hero-scissor',gate:'gate-open',spiral:'spiral-turn',sgate:'sgate',burma:'burma',press:'press',lift:'lift',conveyor:'conveyor',kitchen:'kitchen',tank:'tank',tava:'tava'};
   const vname=src=>{const m=/assets\/img\/r-([a-z]+?)t?\.jpg/.exec(src||'');if(!m)return null;const v=MV[m[1]];return v?(v===1?m[1]:v):null;};
   const mkv=(img,v)=>{const e=document.createElement('video');e.muted=true;e.loop=true;e.playsInline=true;['muted','playsinline','loop'].forEach(a=>e.setAttribute(a,''));
     e.preload='none';e.poster='assets/video/'+v+'.jpg';e.className=img.className;e.setAttribute('aria-label',img.alt||'');if(img.dataset.iAlt)e.dataset.iAria=img.dataset.iAlt;
