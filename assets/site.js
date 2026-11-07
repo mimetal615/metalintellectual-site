@@ -33,6 +33,7 @@
   let l=null;
   try{l=new URLSearchParams(location.search).get('lang');}catch(e){}
   if(!l){try{l=localStorage.getItem('mi-lang');}catch(e){}}
+  if(!l&&/bot|crawl|spider|slurp|google|bing|yandex|facebookexternalhit|whatsapp/i.test(navigator.userAgent||''))l='tr';
   if(!l){const n=(navigator.language||'tr').toLowerCase();l=n.startsWith('tr')?'tr':n.startsWith('ar')?'ar':'en';}
   setLang(l,false);
 
