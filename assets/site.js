@@ -48,7 +48,7 @@
     e.setAttribute('data-inview','');['webm','mp4'].forEach(x=>{const so=document.createElement('source');so.src='assets/video/'+v+'.'+x;so.type='video/'+x;e.appendChild(so);});
     if(img.getAttribute('width')){e.setAttribute('width',img.getAttribute('width'));e.setAttribute('height',img.getAttribute('height'));}
     img.replaceWith(e);return e;};
-  document.querySelectorAll('img[src*="assets/img/r-"]').forEach(img=>{if(img.closest('.lb')||img.classList.contains('sc-ln'))return;const v=vname(img.getAttribute('src'));if(!v)return;
+  document.querySelectorAll('img[src*="assets/img/r-"]').forEach(img=>{if(img.closest('.lb')||img.closest('.sc-im')||img.classList.contains('sc-ln'))return;const v=vname(img.getAttribute('src'));if(!v)return;
     const a=img.closest('a.ph');if(a)a.dataset.v=v;const im=img.closest('.sc-im');if(im){const ln=im.querySelector('.sc-ln');ln&&ln.remove();}mkv(img,v);});
 
   // fotoğraf büyütme
