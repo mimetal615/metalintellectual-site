@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /tesekkurler.html
 Disallow: /app/
+Disallow: /mucit/
 
 Sitemap: https://metalintellectual.com/sitemap.xml
